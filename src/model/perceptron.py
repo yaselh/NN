@@ -7,6 +7,7 @@ import numpy as np
 
 from util.activation_functions import Activation
 from model.classifier import Classifier
+from report.evaluator import Evaluator
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
                     level=logging.DEBUG,
@@ -60,12 +61,17 @@ class Perceptron(Classifier):
             Print logging messages with validation accuracy if verbose is True.
         """
 
-        for input, label in zip(self.trainingSet.input, self.trainingSet.label):
-            y = np.dot(input, self.weight) + self.threshold
-            output = 1 if Activation.sign(y) else 0
-            error = label - output
-            self.threshold = self.threshold + error*self.learningRate
-            self.updateWeights(input, error)
+        evaluator = Evaluator()
+        for i in range(self.epochs):
+            for input, label in zip(self.trainingSet.input, self.trainingSet.label):
+                y = np.dot(input, self.weight) + self.threshold
+                output = 1 if Activation.sign(y) else 0
+                error = label - output
+                self.threshold = self.threshold + error*self.learningRate
+                self.updateWeights(input, error)
+            if verbose:
+                print("Epoch: " + str(i+1))
+                evaluator.printAccuracy(self.validationSet, self.evaluate(self.validationSet))
 
     def classify(self, testInstance):
         """Classify a single instance.

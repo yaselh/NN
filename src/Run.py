@@ -16,13 +16,13 @@ def main():
                                         data.validationSet,
                                         data.testSet,
                                         learningRate=0.01,
-                                        epochs=40)
+                                        epochs=1)
 
     # Train the classifiers
     print("=========================")
     print("Training..")
 
-    print("\nPerceptron has been trained..")
+    print("\nTraining the Perceptron..")
     myPerceptronClassifier.train()
     print("Done..")
 

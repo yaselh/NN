@@ -12,6 +12,7 @@ class Activation:
     """
     Containing various activation functions and their derivatives
     """
+
     
     @staticmethod
     def sign(netOutput, threshold=0):

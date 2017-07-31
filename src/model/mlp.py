@@ -72,20 +72,25 @@ class MultilayerPerceptron(Classifier):
         # Build up the network from specific layers
         self.layers = []
 
-        units = [128,64,10]
+        #Number of units in each Layer
+        #In this Instance  we consider units 128 for the input layer
+        #and 10 for the output layer.
+        #another example could be : units = [128,128,64,10]
+        units = [128,10]
         # Input layer
         inputActivation = "sigmoid"
         self.layers.append(LogisticLayer(train.input.shape[1], units[0],
                            None, inputActivation, False))
 
-        #Hidden layer
-        inputActivation = "sigmoid"
-        self.layers.append(LogisticLayer(units[0]-1, units[1],
-                           None, inputActivation, False))
+        #Hidden layers
+        for i in range (1, len(units)-1):
+            layerActivation = "sigmoid"
+            self.layers.append(LogisticLayer(units[i-1]-1, units[i],
+                           None, layerActivation, False))
 
         # Output layer
         outputActivation = "softmax"
-        self.layers.append(LogisticLayer(units[1]-1, units[2],
+        self.layers.append(LogisticLayer(units[-2]-1, units[-1],
                            None, outputActivation, True))
 
         self.inputWeights = inputWeights
@@ -143,11 +148,11 @@ class MultilayerPerceptron(Classifier):
         """
         self._get_output_layer().updateWeights(learningRate)
 
-        for l in range(len(self.layers)-2, 0, -1):
-            nextWeights = self._get_layer(l+1).weights
-            nextDerivatives = self._get_layer(l+1).deltas
-            self._get_layer(l).computeDerivative(nextWeights, nextDerivatives)
-            self._get_layer(l).updateWeights(learningRate)
+        for l in range(len(self.layers)-1, 0, -1):
+            nextWeights = self._get_layer(l).weights
+            nextDerivatives = self._get_layer(l).deltas
+            self._get_layer(l-1).computeDerivative(nextWeights, nextDerivatives)
+            self._get_layer(l-1).updateWeights(learningRate)
 
 
     def train(self, verbose=True):

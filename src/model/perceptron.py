@@ -47,10 +47,9 @@ class Perceptron(Classifier):
 
         # Initialize the weight vector with small random values
         # around 0 and0.1
-        self.weight = np.random.rand(self.trainingSet.input.shape[1])/100
+        # N weights for the pixels and 1 for the threshold
+        self.weight = np.random.rand(self.trainingSet.input.shape[1] + 1)/100
 
-        # Initialize the weight vector with a small random value
-        self.threshold = np.random.rand()/100
 
     def train(self, verbose=True):
         """Train the perceptron with the perceptron learning algorithm.
@@ -64,10 +63,9 @@ class Perceptron(Classifier):
         evaluator = Evaluator()
         for i in range(self.epochs):
             for input, label in zip(self.trainingSet.input, self.trainingSet.label):
-                y = np.dot(input, self.weight) + self.threshold
-                output = 1 if Activation.sign(y) else 0
+                input = self.augmentedInput(input)
+                output = 1 if self.fire(input) else 0
                 error = label - output
-                self.threshold = self.threshold + error*self.learningRate
                 self.updateWeights(input, error)
             if verbose:
                 print("Epoch: " + str(i+1))
@@ -85,6 +83,7 @@ class Perceptron(Classifier):
         bool :
             True if the testInstance is recognized as a 7, False otherwise.
         """
+        testInstance = self.augmentedInput(testInstance)
         return self.fire(testInstance)
 
 
@@ -109,6 +108,9 @@ class Perceptron(Classifier):
 
     def updateWeights(self, input, error):
         self.weight = self.weight + self.learningRate*error*input
+
+    def augmentedInput(self, input):
+        return np.append(input, 1)
 
     def fire(self, input):
         """Fire the output of the perceptron corresponding to the input """

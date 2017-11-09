@@ -16,7 +16,7 @@ def main():
                                         data.validationSet,
                                         data.testSet,
                                         learningRate=0.01,
-                                        epochs=1)
+                                        epochs=10)
 
     # Train the classifiers
     print("=========================")
